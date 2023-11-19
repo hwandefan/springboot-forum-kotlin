@@ -4,6 +4,7 @@ import jakarta.persistence.*
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.userdetails.UserDetailsService
 import java.util.UUID
 
 @Entity
@@ -12,9 +13,13 @@ data class User(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private val id:UUID,
+    @Column(name = "firstName")
     private var firstName:String,
+    @Column(name = "lastName")
     private val lastName: String,
+    @Column(name = "email", unique = true)
     private val email: String,
+    @Column(name = "password")
     private val password: String,
     @Enumerated(EnumType.STRING)
     private val role:Role
