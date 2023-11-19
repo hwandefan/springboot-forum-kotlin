@@ -1,5 +1,6 @@
 package com.hwandefan.forum.config
 
+import com.hwandefan.forum.config.jwt.JwtAuthenticationFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationProvider
@@ -12,7 +13,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 class SecurityConfiguration(private val authenticationProvider:AuthenticationProvider,
-    private val jwtAuthFilter:JwtAuthenticationFilter) {
+    private val jwtAuthFilter: JwtAuthenticationFilter
+) {
     @Bean
     fun securityFilterChain(http:HttpSecurity):SecurityFilterChain {
         http

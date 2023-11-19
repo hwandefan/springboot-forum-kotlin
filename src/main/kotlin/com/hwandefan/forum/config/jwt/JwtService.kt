@@ -1,4 +1,4 @@
-package com.hwandefan.forum.config
+package com.hwandefan.forum.config.jwt
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service
 import java.security.Key
 import java.util.*
 import java.util.function.Function
-import kotlin.collections.HashMap
 import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 @Service
