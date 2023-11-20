@@ -1,4 +1,4 @@
-package com.hwandefan.forum.repository
+package com.hwandefan.forum.repository.user
 
 import com.hwandefan.forum.model.User
 import org.springframework.data.jpa.repository.JpaRepository

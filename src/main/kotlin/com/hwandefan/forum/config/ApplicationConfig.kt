@@ -1,6 +1,6 @@
 package com.hwandefan.forum.config
 
-import com.hwandefan.forum.service.CustomUserDetailsService
+import com.hwandefan.forum.service.user.CustomUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

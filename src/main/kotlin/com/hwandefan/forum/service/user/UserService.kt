@@ -1,4 +1,4 @@
-package com.hwandefan.forum.service
+package com.hwandefan.forum.service.user
 
 import org.springframework.stereotype.Service
 
