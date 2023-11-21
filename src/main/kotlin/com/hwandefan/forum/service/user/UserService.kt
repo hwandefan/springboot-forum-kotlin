@@ -9,6 +9,6 @@ import org.springframework.stereotype.Service
 @Service
 public class UserService @Autowired constructor(private val userRepository: UserRepository): UserDetailsService {
     override fun loadUserByUsername(username: String?): UserDetails {
-        return userRepository.findByEmail(username!!)
+        return userRepository.findByEmail(username!!)!!
     }
 }

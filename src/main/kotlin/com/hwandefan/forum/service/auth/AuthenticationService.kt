@@ -23,6 +23,8 @@ class AuthenticationService(
     private val authenticationManager: AuthenticationManager
     ) {
     fun register(request: RegisterRequest):AuthenticationResponse {
+        if(userRepository.findByEmail(request.email) != null)
+            return AuthenticationResponse("User is already registered")
         val user = User(
             UUID.randomUUID(),
             request.firstname,
@@ -43,7 +45,7 @@ class AuthenticationService(
                 request.password
             )
         )
-        val user:UserDetails = userRepository.findByEmail(request.email)
+        val user:UserDetails = userRepository.findByEmail(request.email)!!
         val jwtToken = jwtService.generateToken(user)
         return AuthenticationResponse(jwtToken)
     }
