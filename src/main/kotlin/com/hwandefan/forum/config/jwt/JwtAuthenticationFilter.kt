@@ -1,19 +1,20 @@
 package com.hwandefan.forum.config.jwt
 
+import com.hwandefan.forum.service.user.UserService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 
 @Component
-class JwtAuthenticationFilter() : OncePerRequestFilter() {
-    private lateinit var jwtService: JwtService
-    private lateinit var userDetailsService: UserDetailsService
+class JwtAuthenticationFilter(
+    var jwtService: JwtService,
+    var userDetailsService: UserService
+) : OncePerRequestFilter() {
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -27,9 +28,9 @@ class JwtAuthenticationFilter() : OncePerRequestFilter() {
         val jwt:String = authHeader.substring(7);
         val userEmail = jwtService.extractUsername(jwt)
         if(userEmail!=null && SecurityContextHolder.getContext().authentication == null) {
-            val userDetails = this.userDetailsService.loadUserByUsername(userEmail)
+            val userDetails = userDetailsService.loadUserByUsername(userEmail)
             if (jwtService.isTokenValid(jwt, userDetails)) {
-                var authToken: UsernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(
+                val authToken = UsernamePasswordAuthenticationToken(
                     userDetails,
                     null,
                     userDetails.authorities

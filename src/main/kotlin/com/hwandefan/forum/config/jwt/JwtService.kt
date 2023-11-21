@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service
 import java.security.Key
 import java.util.*
 import java.util.function.Function
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 @Service
 class JwtService {
@@ -35,10 +34,10 @@ class JwtService {
     }
 
     fun generateToken(userDetails: UserDetails):String? {
-        return generateToken(hashMapOf(),userDetails)
+        return generateToken(mapOf(),userDetails)
     }
 
-    fun generateToken(extraClaims: Map<String, JvmType.Object>,
+    fun generateToken(extraClaims: Map<String, Any>,
                       userDetails: UserDetails):String {
         return Jwts
             .builder()

@@ -10,9 +10,9 @@ import com.hwandefan.forum.repository.user.UserRepository
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import java.lang.Exception
 import java.util.*
 
 @Service
@@ -43,7 +43,7 @@ class AuthenticationService(
                 request.password
             )
         )
-        val user:UserDetails = userRepository.findByEmail(request.email)?:throw Exception("User Not Found")
+        val user:UserDetails = userRepository.findByEmail(request.email)
         val jwtToken = jwtService.generateToken(user)
         return AuthenticationResponse(jwtToken)
     }

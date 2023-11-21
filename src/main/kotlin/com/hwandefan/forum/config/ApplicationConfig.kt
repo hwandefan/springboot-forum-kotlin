@@ -1,6 +1,6 @@
 package com.hwandefan.forum.config
 
-import com.hwandefan.forum.service.user.CustomUserDetailsService
+import com.hwandefan.forum.service.user.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -13,7 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 
 @Configuration
-class ApplicationConfig @Autowired constructor(private val customUserDetailsService: CustomUserDetailsService) {
+class ApplicationConfig @Autowired constructor(private val customUserDetailsService: UserService) {
     @Bean
     fun userDetailsService():UserDetailsService {
         return customUserDetailsService

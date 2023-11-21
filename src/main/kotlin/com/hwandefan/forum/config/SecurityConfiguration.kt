@@ -22,16 +22,16 @@ class SecurityConfiguration(private val authenticationProvider:AuthenticationPro
                 it.disable()
             }
             .authorizeHttpRequests {
-                it.requestMatchers("")
+                it.requestMatchers("/api/v1/auth/**")
                     .permitAll()
-                    .anyRequest().authenticated()
+                    .anyRequest()
+                    .authenticated()
             }
             .sessionManagement {
                 it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             }
             .authenticationProvider(authenticationProvider)
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
-
         return http.build()
     }
 }
