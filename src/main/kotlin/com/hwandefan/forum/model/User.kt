@@ -8,21 +8,24 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import java.util.UUID
 
 @Entity
-@Table(name="_user")
+@Table(name="_users")
 data class User(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private val id:UUID,
+    @Column(name="id")
+    private val id:UUID = UUID.randomUUID(),
     @Column(name = "firstName")
-    private var firstName:String,
+    var firstName:String,
     @Column(name = "lastName")
-    private val lastName: String,
+    var lastName: String,
     @Column(name = "email", unique = true)
     private val email: String,
     @Column(name = "password")
     private val password: String,
     @Enumerated(EnumType.STRING)
-    private val role:Role
+    private val role:Role,
+    @OneToOne(cascade = [CascadeType.ALL], mappedBy = "user")
+    val preferences:UserPreferences
 ):UserDetails {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         return mutableListOf(SimpleGrantedAuthority(role.name))

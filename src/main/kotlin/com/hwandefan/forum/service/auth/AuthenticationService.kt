@@ -6,6 +6,7 @@ import com.hwandefan.forum.api.auth.RegisterRequest
 import com.hwandefan.forum.config.jwt.JwtService
 import com.hwandefan.forum.model.Role
 import com.hwandefan.forum.model.User
+import com.hwandefan.forum.model.UserPreferences
 import com.hwandefan.forum.repository.user.UserRepository
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -25,14 +26,17 @@ class AuthenticationService(
     fun register(request: RegisterRequest):AuthenticationResponse {
         if(userRepository.findByEmail(request.email) != null)
             return AuthenticationResponse("User is already registered")
+        val userPreferences = UserPreferences()
         val user = User(
             UUID.randomUUID(),
             request.firstname,
             request.lastname,
             request.email,
             passwordEncoder.encode(request.password),
-            Role.USER
+            Role.USER,
+            userPreferences
         )
+        userPreferences.user = user
         userRepository.save(user)
         val jwtToken = jwtService.generateToken(user)
         return AuthenticationResponse(jwtToken)
