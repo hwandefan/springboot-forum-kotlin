@@ -36,7 +36,7 @@ class UserController(
         val auth = SecurityContextHolder.getContext().authentication
         if (auth != null && auth.principal is UserDetails) {
             val username = (auth.principal as UserDetails).username
-            val confirmation = userService.deleteUser(username)
+            val confirmation = userService.deleteUserByUsername(username)
             return ResponseEntity.ok(UserDeleteResponse(username,confirmation))
         }
         return ResponseEntity.ok(UserDeleteResponse("NOT FOUND",false))

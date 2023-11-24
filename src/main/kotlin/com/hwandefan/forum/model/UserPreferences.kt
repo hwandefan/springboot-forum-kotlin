@@ -12,9 +12,13 @@ data class UserPreferences(
     private var id: UUID? = null,
     @OneToOne
     @JoinColumn(name="user_id")
-    var user: User? = null,
+    private var user: User? = null,
     @Column(name="profilePhoto")
     var profilePhoto: String? = null,
     @Column(name="userStatus")
     var userStatus: String? = null
-)
+) {
+    fun setUser(user:User) {
+        this.user = user
+    }
+}

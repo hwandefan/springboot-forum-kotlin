@@ -36,7 +36,7 @@ class AuthenticationService(
             Role.USER,
             userPreferences
         )
-        userPreferences.user = user
+        userPreferences.setUser(user)
         userRepository.save(user)
         val jwtToken = jwtService.generateToken(user)
         return AuthenticationResponse(jwtToken)

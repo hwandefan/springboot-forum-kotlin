@@ -1,5 +1,8 @@
 package com.hwandefan.forum.service.user
 
+import com.hwandefan.forum.api.admin.UserInfoResponse
+import com.hwandefan.forum.api.admin.UserResponse
+import com.hwandefan.forum.model.Role
 import com.hwandefan.forum.model.User
 import com.hwandefan.forum.repository.user.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -9,6 +12,7 @@ import org.springframework.stereotype.Service
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
+import kotlin.collections.ArrayList
 
 @Service
 public class UserService @Autowired constructor(private val userRepository: UserRepository): UserDetailsService {
@@ -34,6 +38,17 @@ public class UserService @Autowired constructor(private val userRepository: User
         }
     }
 
+    fun grantAdminRights(id:String):UserInfoResponse {
+        try {
+            val user = userRepository.findById(UUID.fromString(id)).get()
+            user.setRole(Role.ADMIN)
+            userRepository.save(user)
+            return UserInfoResponse(id, "Admin role is granted")
+        } catch (e:Exception) {
+            return UserInfoResponse(id, "Wrong operation, user is not updated")
+        }
+    }
+
     private fun photoLinkGeneration(base64String: String, username:String):String {
         val base64Bytes = Base64.getDecoder().decode(base64String)
         val publicPathFile = "/profile_photos/${username}_main_photo.png"
@@ -43,7 +58,7 @@ public class UserService @Autowired constructor(private val userRepository: User
         return publicPathFile
     }
 
-    fun deleteUser(username: String):Boolean {
+    fun deleteUserByUsername(username: String):Boolean {
         val user:User = loadUserByUsername(username) as User
         return try {
             userRepository.delete(user)
@@ -52,6 +67,38 @@ public class UserService @Autowired constructor(private val userRepository: User
             true
         } catch (e:Exception) {
             false
+        }
+    }
+
+    fun deleteUserById(id:String): UserInfoResponse {
+        return try {
+            val user = userRepository.findById(UUID.fromString(id)).get()
+            userRepository.delete(user)
+            UserInfoResponse(id,"User is deleted")
+        } catch (e:Exception) {
+            UserInfoResponse(id, "User is not found")
+        }
+
+    }
+
+    fun getAllUsers(): List<UserResponse> {
+        try {
+            val userResponseList: ArrayList<UserResponse> = arrayListOf()
+            userRepository.findAll().forEach {
+                userResponseList.add(
+                    UserResponse(
+                        it.username,
+                        it.getId().toString(),
+                        it.getRole(),
+                        it.lastName,
+                        it.firstName,
+                        it.preferences.profilePhoto
+                    )
+                )
+            }
+            return userResponseList
+        } catch(e:Exception) {
+            return arrayListOf()
         }
     }
 }

@@ -23,14 +23,24 @@ data class User(
     @Column(name = "password")
     private val password: String,
     @Enumerated(EnumType.STRING)
-    private val role:Role,
+    private var role:Role,
     @OneToOne(cascade = [CascadeType.ALL], mappedBy = "user")
     val preferences:UserPreferences
 ):UserDetails {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         return mutableListOf(SimpleGrantedAuthority(role.name))
     }
+    fun getRole():Role{
+        return this.role
+    }
 
+    fun setRole(role: Role) {
+        this.role = role
+    }
+
+    fun getId():UUID {
+        return this.id
+    }
     override fun getPassword(): String {
         return password
     }
