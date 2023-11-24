@@ -13,16 +13,18 @@ class UserController(
 ) {
     @PutMapping("/edit")
     fun editUser(
-        @RequestHeader("Authorization") authToken: String,
         @RequestBody request: UserEditRequest
     ): ResponseEntity<UserEditResponse> {
         val auth = SecurityContextHolder.getContext().authentication
         if (auth != null && auth.principal is UserDetails) {
             val username = (auth.principal as UserDetails).username
-            val message = userService.updateUser(username, arrayListOf(request.userStatus,
-                request.firstName, request.lastName, request.profilePhoto)
+            val message = userService.updateUser(
+                username, arrayListOf(
+                    request.userStatus,
+                    request.firstName, request.lastName, request.profilePhoto
+                )
             )
-            if(message==null)
+            if (message != "OK")
                 return ResponseEntity.ok(UserEditResponse("failure|user not updated"))
             return ResponseEntity.ok(UserEditResponse("success"))
         }
@@ -30,9 +32,13 @@ class UserController(
     }
 
     @DeleteMapping("/delete")
-    fun deleteUser(
-        @RequestHeader("Authorization") authToken: String
-    ): ResponseEntity<UserDeleteResponse> {
-        return null!!
+    fun deleteUser(): ResponseEntity<UserDeleteResponse> {
+        val auth = SecurityContextHolder.getContext().authentication
+        if (auth != null && auth.principal is UserDetails) {
+            val username = (auth.principal as UserDetails).username
+            val confirmation = userService.deleteUser(username)
+            return ResponseEntity.ok(UserDeleteResponse(username,confirmation))
+        }
+        return ResponseEntity.ok(UserDeleteResponse("NOT FOUND",false))
     }
 }

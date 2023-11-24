@@ -1,4 +1,6 @@
 package com.hwandefan.forum.api.user
 
-class UserDeleteResponse {
-}
+data class UserDeleteResponse(
+    val username:String,
+    val confirmation:Boolean
+)

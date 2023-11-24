@@ -42,4 +42,16 @@ public class UserService @Autowired constructor(private val userRepository: User
         Files.write(path,base64Bytes)
         return publicPathFile
     }
+
+    fun deleteUser(username: String):Boolean {
+        val user:User = loadUserByUsername(username) as User
+        return try {
+            userRepository.delete(user)
+            Files.deleteIfExists(Paths.get(
+                "src/main/resources/public/profile_photos/${username}_main_photo.png"))
+            true
+        } catch (e:Exception) {
+            false
+        }
+    }
 }
