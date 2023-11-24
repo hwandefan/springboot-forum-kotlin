@@ -24,6 +24,8 @@ class SecurityConfiguration(private val authenticationProvider:AuthenticationPro
             .authorizeHttpRequests {
                 it.requestMatchers("/api/v1/auth/**")
                     .permitAll()
+                    .requestMatchers("/profile_photos/**")
+                    .permitAll()
                     .requestMatchers("/api/v1/admin/**")
                     .hasAuthority("ADMIN")
                     .anyRequest()

@@ -22,7 +22,7 @@ class UserController(
             val message = userService.updateUser(username, arrayListOf(request.userStatus,
                 request.firstName, request.lastName, request.profilePhoto)
             )
-            if(message!="OK")
+            if(message==null)
                 return ResponseEntity.ok(UserEditResponse("failure|user not updated"))
             return ResponseEntity.ok(UserEditResponse("success"))
         }

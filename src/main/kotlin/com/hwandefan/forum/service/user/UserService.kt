@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
-import java.lang.Exception
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.util.*
 
 @Service
 public class UserService @Autowired constructor(private val userRepository: UserRepository): UserDetailsService {
@@ -24,11 +26,20 @@ public class UserService @Autowired constructor(private val userRepository: User
             if(params[2] != null)
                 user.lastName = params[2]!!
             if(params[3] != null)
-                user.preferences.profilePhoto = params[3]
+                user.preferences.profilePhoto = photoLinkGeneration(params[3]!!, user.username)
             userRepository.save(user)
             "OK"
         } catch (e:Exception) {
             null
         }
+    }
+
+    private fun photoLinkGeneration(base64String: String, username:String):String {
+        val base64Bytes = Base64.getDecoder().decode(base64String)
+        val publicPathFile = "/profile_photos/${username}_main_photo.png"
+        val pathFile = "src/main/resources/public${publicPathFile}"
+        val path = Paths.get(pathFile)
+        Files.write(path,base64Bytes)
+        return publicPathFile
     }
 }
