@@ -34,6 +34,10 @@ data class User(
         return this.role
     }
 
+    fun getUserId():UUID{
+        return this.id
+    }
+
     fun setRole(role: Role) {
         this.role = role
     }

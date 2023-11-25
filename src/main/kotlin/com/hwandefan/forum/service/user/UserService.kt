@@ -39,13 +39,13 @@ public class UserService @Autowired constructor(private val userRepository: User
     }
 
     fun grantAdminRights(id:String):UserInfoResponse {
-        try {
+        return try {
             val user = userRepository.findById(UUID.fromString(id)).get()
             user.setRole(Role.ADMIN)
             userRepository.save(user)
-            return UserInfoResponse(id, "Admin role is granted")
+            UserInfoResponse(id, "Admin role is granted")
         } catch (e:Exception) {
-            return UserInfoResponse(id, "Wrong operation, user is not updated")
+            UserInfoResponse(id, "Wrong operation, user is not updated")
         }
     }
 
