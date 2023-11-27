@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.util.*
 
@@ -39,7 +40,19 @@ class TopicController(
     fun deleteTopic(
         @PathVariable id:String
     ): ResponseEntity<TopicInfoResponse> {
-        return ResponseEntity.ok(topicService.deleteTopic(UUID.fromString(id)))
+        return try {
+            val auth = SecurityContextHolder.getContext().authentication
+            if (auth != null && auth.principal is UserDetails) {
+                ResponseEntity.ok(topicService.deleteTopic(UUID.fromString(id),
+                    (auth.principal as User).getUserId().toString()))
+            } else {
+                ResponseEntity.ok(TopicInfoResponse(id.toString(),
+                    "ERROR: Topic with this id has not deleted"))
+            }
+        } catch (e:Exception) {
+            ResponseEntity.ok(TopicInfoResponse(id.toString(),
+                "ERROR: Topic with this id has not deleted"))
+        }
     }
 
     @PutMapping("/edit/{id}")
@@ -47,23 +60,36 @@ class TopicController(
         @PathVariable id:String,
         @RequestBody request: TopicRequest
     ): ResponseEntity<TopicInfoResponse> {
-        return ResponseEntity.ok(topicService.editTopic(UUID.fromString(id),request))
+        try {
+            val auth = SecurityContextHolder.getContext().authentication
+            return if (auth != null && auth.principal is User) {
+                ResponseEntity.ok(topicService
+                    .editTopic(
+                        UUID.fromString(id),
+                        request,
+                        (auth.principal as User).getUserId().toString())
+                )
+            } else
+                ResponseEntity.ok(TopicInfoResponse(id.toString(),
+                    "ERROR: Topic has not been updated"))
+        } catch (e:Exception){
+            return ResponseEntity.ok(TopicInfoResponse(id.toString(),
+                "ERROR: Topic has not been updated"))
+        }
     }
 
-    @GetMapping("/topics?page={page}")
+    @GetMapping("/topics")
     fun getTopics(
-        @PathVariable page:Int
+        @RequestParam page:Int
     ): ResponseEntity<List<TopicResponse>> {
         return ResponseEntity.ok(topicService.getAllTopics(page))
     }
 
-    //TODO In service AND TEST ALL ENDPOINTS!!!! ALSO ADD COMMENTS FUNCTIONALITY!!!
-    @GetMapping("/topics?name={name}&{page}")
+    @GetMapping("/filter")
     fun getFilteredTopicsByName(
-        @PathVariable name:String,
-        @PathVariable page:Int
+        @RequestParam name:String
     ):ResponseEntity<List<TopicResponse>> {
-        return ResponseEntity.ok(topicService.getFilteredTopics(name, page))
+        return ResponseEntity.ok(topicService.getFilteredTopics(name))
     }
 
     @GetMapping("/{id}")
@@ -72,5 +98,21 @@ class TopicController(
     ): ResponseEntity<TopicResponse>
     {
         return ResponseEntity.ok(topicService.getTopicById(UUID.fromString(id)))
+    }
+
+    @GetMapping("/my_topics")
+    fun getLoggedUserTopics(): ResponseEntity<List<TopicResponse>>{
+        return try {
+            val auth = SecurityContextHolder.getContext().authentication
+            if (auth != null && auth.principal is User) {
+                ResponseEntity.ok(topicService.getLoggedUserTopics(
+                    (auth.principal as User)
+                ))
+            } else {
+                ResponseEntity.ok(arrayListOf())
+            }
+        } catch (e:Exception) {
+            ResponseEntity.ok(arrayListOf())
+        }
     }
 }

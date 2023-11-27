@@ -11,7 +11,7 @@ data class Comment (
     @Column(name="id")
     private val id:UUID = UUID.randomUUID(),
     @Column(name="text")
-    private val text:String,
+    private var text:String,
     @ManyToOne
     @JoinColumn(name="topicId")
     private val topic:Topic,
@@ -19,5 +19,29 @@ data class Comment (
     @JoinColumn(name="userId")
     private val user: User,
     @Column(name="status")
-    private val status: Status
-)
+    private var status: Status
+) {
+    fun getUserId():String{
+        return this.user.getUserId().toString()
+    }
+
+    fun getStatus():Status{
+        return this.status
+    }
+
+    fun getText():String{
+        return this.text
+    }
+
+    fun getId():String{
+        return this.id.toString()
+    }
+
+    fun setStatus(status: Status) {
+        this.status = status
+    }
+
+    fun setText(text:String) {
+        this.text = text
+    }
+}

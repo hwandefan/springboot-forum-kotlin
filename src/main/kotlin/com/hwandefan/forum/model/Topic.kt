@@ -22,6 +22,9 @@ data class Topic (
     @Column(name="status")
     private var status: Status
 ) {
+    fun getId():String {
+        return this.id.toString()
+    }
     fun getTheme():String{
         return this.theme
     }

@@ -2,5 +2,8 @@ package com.hwandefan.forum.model
 
 enum class Status {
     ORIGINAL,
-    EDITED
+    EDITED,
+    NOT_FOUND,
+    DELETED,
+    CREATED
 }
