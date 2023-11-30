@@ -37,6 +37,7 @@ dependencies {
 	runtimeOnly 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.mockito:mockito-core:5.7.0'
 }
 
 tasks.withType(KotlinCompile) {
@@ -51,5 +52,5 @@ tasks.named('bootBuildImage') {
 }
 
 tasks.named('test') {
-//	useJUnitPlatform()
+	useJUnitPlatform()
 }
