@@ -1,5 +1,6 @@
 package com.hwandefan.forum.service
 
+import com.hwandefan.forum.api.topic.TopicRequest
 import com.hwandefan.forum.model.*
 import com.hwandefan.forum.repository.topic.TopicRepository
 import com.hwandefan.forum.repository.topic.comment.CommentRepository
@@ -8,6 +9,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
+import org.mockito.Mockito
+import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.data.domain.Page
@@ -43,7 +46,7 @@ internal class TopicServiceTest {
 
     private val topicId = UUID.randomUUID()
 
-    private val topicList = listOf(
+    private val topicMockList = listOf(
         Topic(
             UUID.randomUUID(),
             "Test Theme",
@@ -67,7 +70,7 @@ internal class TopicServiceTest {
         val page = 0
         val pageable: Pageable = PageRequest.of(page, 20)
 
-        val pageList: Page<Topic> = PageImpl(topicList, pageable, topicList.size.toLong())
+        val pageList: Page<Topic> = PageImpl(topicMockList, pageable, topicMockList.size.toLong())
 
         `when`(topicRepository.findAll(pageable)).thenReturn(pageList)
 
@@ -80,7 +83,10 @@ internal class TopicServiceTest {
 
     @Test
     fun `should return one topic by id`(){
-        
+        `when`(topicRepository.findById(topicId)).thenReturn(Optional.of(topicMockList[1]))
+        val result = topicService.getTopicById(topicId)
+        assert(result.userId == mockUser.getUserId().toString())
+        assert(result.id == topicId.toString())
     }
 
     @Test
@@ -89,17 +95,40 @@ internal class TopicServiceTest {
     }
 
     @Test
-    fun `should return filtered topics`(){
-
+    fun `should return filtered topics by name`(){
+        val topicName = "Theme 2"
+        `when`(topicRepository.findByThemeContaining(topicName)).thenReturn(
+            topicMockList.filter {
+                it.getTheme().contains(topicName)
+            }
+        )
+        val result = topicService.getFilteredTopics(topicName)
+        assert(result.size == 1)
+        assert(result[0].text == "Test text 2")
     }
 
     @Test
-    fun `should create topic`(){
-
+    fun `should create a topic`() {
+        topicService.createTopic("Theme", "Text", mockUser)
+        verify(topicRepository).save(Mockito.any(Topic::class.java))
     }
 
     @Test
-    fun `should delete topic`(){
+    fun `should delete the topic`() {
+        `when`(topicRepository.findById(topicId)).thenReturn(Optional.of(topicMockList[1]))
+        topicService.deleteTopic(topicId,mockUser.getUserId().toString())
+        verify(topicRepository).delete(topicMockList[1])
+    }
 
+    @Test
+    fun `should edit the topic`() {
+        val topicRequest = TopicRequest(
+            "Theme from request",
+            "Text from request"
+        )
+        `when`(topicRepository.findById(topicId)).thenReturn(Optional.of(topicMockList[1]))
+        val response = topicService.editTopic(topicId,topicRequest,mockUser.getUserId().toString())
+        verify(topicRepository).save(topicMockList[1])
+        assert(response.topicName == topicRequest.theme)
     }
 }
