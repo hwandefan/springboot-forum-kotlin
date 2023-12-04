@@ -85,7 +85,7 @@ class TopicService(
             }
             topics
         } catch (e: Exception) {
-            arrayListOf()
+            emptyList()
         }
     }
 
