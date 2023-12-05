@@ -81,7 +81,6 @@ public class UserService @Autowired constructor(private val userRepository: User
         } catch (e:Exception) {
             UserInfoResponse(id, "User is not found")
         }
-
     }
 
     fun getAllUsers(): List<UserResponse> {
