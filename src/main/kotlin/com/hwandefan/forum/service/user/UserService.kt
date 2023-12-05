@@ -73,7 +73,10 @@ public class UserService @Autowired constructor(private val userRepository: User
     fun deleteUserById(id:String): UserInfoResponse {
         return try {
             val user = userRepository.findById(UUID.fromString(id)).get()
+            val username = user.username
             userRepository.delete(user)
+            Files.deleteIfExists(Paths.get(
+                "src/main/resources/public/profile_photos/${username}_main_photo.png"))
             UserInfoResponse(id,"User is deleted")
         } catch (e:Exception) {
             UserInfoResponse(id, "User is not found")
